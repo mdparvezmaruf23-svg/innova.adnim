@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>INNOVA.GLOBAL — Admin Panel</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:Arial,sans-serif;
+    background:#050505;
+    color:#fff;
+}
+
+/* LOGIN */
+#loginPage{
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+}
+
+.login-box{
+    width:100%;
+    max-width:420px;
+    background:#0d0d0d;
+    border:1px solid #d4af37;
+    border-radius:18px;
+    padding:35px 25px;
+    text-align:center;
+    box-shadow:0 0 30px rgba(212,175,55,.15);
+}
+
+.logo{
+    font-size:32px;
+    font-weight:800;
+    color:#d4af37;
+    letter-spacing:2px;
+}
+
+.logo span{
+    color:#fff;
+}
+
+.login-box h2{
+    margin:20px 0;
+}
+
+input,textarea,select{
+    width:100%;
+    padding:14px;
+    margin:8px 0;
+    background:#050505;
+    color:#fff;
+    border:1px solid #444;
+    border-radius:10px;
+    outline:none;
+}
+
+input:focus,textarea:focus,select:focus{
+    border-color:#d4af37;
+}
+
+button{
+    border:none;
+    cursor:pointer;
+    border-radius:10px;
+    padding:13px 18px;
+    font-weight:bold;
+}
+
+.gold-btn{
+    width:100%;
+    background:#d4af37;
+    color:#000;
+    margin-top:12px;
+}
+
+.gold-btn:hover{
+    background:#f1d76a;
+}
+
+/* ADMIN */
+#adminPage{
+    display:none;
+}
+
+.topbar{
+    height:65px;
+    background:#0d0d0d;
+    border-bottom:1px solid #333;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 20px;
+    position:sticky;
+    top:0;
+    z-index:10;
+}
+
+.topbar-title{
+    color:#d4af37;
+    font-weight:bold;
+}
+
+.logout-btn{
+    background:#d4af37;
+    color:#000;
+}
+
+.layout{
+    display:flex;
+    min-height:calc(100vh - 65px);
+}
+
+.sidebar{
+    width:240px;
+    background:#080808;
+    border-right:1px solid #222;
+    padding:15px;
+}
+
+.menu-btn{
+    width:100%;
+    text-align:left;
+    background:transparent;
+    color:#ddd;
+    margin-bottom:7px;
+    padding:14px;
+}
+
+.menu-btn:hover,
+.menu-btn.active{
+    background:#d4af37;
+    color:#000;
+}
+
+.content{
+    flex:1;
+    padding:25px;
+    overflow:auto;
+}
+
+.page{
+    display:none;
+}
+
+.page.active{
+    display:block;
+}
+
+.page-title{
+    color:#d4af37;
+    margin-bottom:20px;
+}
+
+.cards{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:15px;
+}
+
+.card{
+    background:#0d0d0d;
+    border:1px solid #292929;
+    border-radius:14px;
+    padding:20px;
+}
+
+.card h3{
+    color:#aaa;
+    font-size:14px;
+}
+
+.card strong{
+    display:block;
+    font-size:28px;
+    color:#d4af37;
+    margin-top:10px;
+}
+
+.panel{
+    margin-top:25px;
+    background:#0d0d0d;
+    border:1px solid #292929;
+    border-radius:14px;
+    padding:20px;
+}
+
+.empty{
+    text-align:center;
+    padding:40px 20px;
+    color:#777;
+}
+
+.request{
+    border:1px solid #333;
+    border-radius:12px;
+    padding:18px;
+    margin-bottom:12px;
+}
+
+.request h3{
+    color:#d4af37;
+    margin-bottom:10px;
+}
+
+.request p{
+    margin:6px 0;
+    color:#ccc;
+}
+
+.approve{
+    background:#d4af37;
+    color:#000;
+    margin-right:7px;
+}
+
+.reject{
+    background:#222;
+    color:#fff;
+    border:1px solid #555;
+}
+
+.member{
+    border:1px solid #333;
+    padding:18px;
+    border-radius:12px;
+    margin-bottom:10px;
+}
+
+.status{
+    color:#5cff91;
+    font-weight:bold;
+}
+
+@media(max-width:900px){
+    .cards{
+        grid-template-columns:repeat(2,1fr);
+    }
+}
+
+@media(max-width:650px){
+
+    .layout{
+        display:block;
+    }
+
+    .sidebar{
+        width:100%;
+        border-right:none;
+        border-bottom:1px solid #222;
+    }
+
+    .content{
+        padding:15px;
+    }
+
+    .cards{
+        grid-template-columns:1fr;
+    }
+
+    .topbar{
+        padding:0 12px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- ================= LOGIN ================= -->
+
+<section id="loginPage">
+
+    <div class="login-box">
+
+        <div class="logo">
+            INNOVA<span>.GLOBAL</span>
+        </div>
+
+        <h2>ADMIN PANEL</h2>
+
+        <input
+            id="adminUsername"
+            type="text"
+            placeholder="Admin Username"
+        >
+
+        <input
+            id="adminPassword"
+            type="password"
+            placeholder="Admin Password"
+        >
+
+        <button
+            class="gold-btn"
+            onclick="adminLogin()"
+        >
+            LOGIN
+        </button>
+
+        <p id="loginError"
+           style="color:#ff5555;margin-top:15px;">
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- ================= ADMIN PANEL ================= -->
+
+<section id="adminPage">
+
+    <header class="topbar">
+
+        <div class="topbar-title">
+            INNOVA.GLOBAL — ADMIN
+        </div>
+
+        <button
+            class="logout-btn"
+            onclick="logoutAdmin()"
+        >
+            LOGOUT
+        </button>
+
+    </header>
+
+
+    <div class="layout">
+
+        <!-- SIDEBAR -->
+
+        <aside class="sidebar">
+
+            <button class="menu-btn active"
+                onclick="openPage('dashboard',this)">
+                1. Dashboard
+            </button>
+
+            <button class="menu-btn"
+                onclick="openPage('notifications',this)">
+                2. Notifications
+            </button>
+
+            <button class="menu-btn"
+                onclick="openPage('members',this)">
+                3. Members
+            </button>
+
+            <button class="menu-btn"
+                onclick="openPage('idRequests',this)">
+                4. ID Activation Requests
+            </button>
+
+            <button class="menu-btn"
+                onclick="openPage('packageRequests',this)">
+                5. Package Activation Requests
+            </button>
+
+            <button class="menu-btn"
+                onclick="openPage('withdrawals',this)">
+                6. Withdrawal Requests
+            </button>
+
+            <button class="menu-btn"
+                onclick="openPage('network',this)">
+                7. Global Network
+            </button>
+
+            <button class="menu-btn"
+                onclick="openPage('earnings',this)">
+                8. Earnings
+            </button>
+
+            <button class="menu-btn"
+                onclick="openPage('announcement',this)">
+                9. Announcement
+            </button>
+
+        </aside>
+
+
+        <!-- CONTENT -->
+
+        <main class="content">
+
+            <!-- DASHBOARD -->
+
+            <section id="dashboard" class="page active">
+
+                <h1 class="page-title">
+                    Dashboard
+                </h1>
+
+                <div class="cards">
+
+                    <div class="card">
+                        <h3>ACTIVE MEMBERS</h3>
+                        <strong id="activeMembers">0</strong>
+                    </div>
+
+                    <div class="card">
+                        <h3>ID REQUESTS</h3>
+                        <strong id="idCount">0</strong>
+                    </div>
+
+                    <div class="card">
+                        <h3>PACKAGE REQUESTS</h3>
+                        <strong id="packageCount">0</strong>
+                    </div>
+
+                    <div class="card">
+                        <h3>WITHDRAWAL REQUESTS</h3>
+                        <strong id="withdrawCount">0</strong>
+                    </div>
+
+                </div>
+
+                <div class="panel">
+
+                    <h2>System Status</h2>
+
+                    <p style="margin-top:15px;color:#aaa;">
+                        Admin Panel interface is ready.
+                    </p>
+
+                    <p style="margin-top:8px;color:#777;">
+                        Real member data will appear after Backend
+                        and Database connection.
+                    </p>
+
+                </div>
+
+            </section>
+
+
+            <!-- NOTIFICATIONS -->
+
+            <section id="notifications" class="page">
+
+                <h1 class="page-title">
+                    Notifications
+                </h1>
+
+                <div class="panel">
+
+                    <div class="empty">
+                        No notifications available.
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- MEMBERS -->
+
+            <section id="members" class="page">
+
+                <h1 class="page-title">
+                    Members
+                </h1>
+
+                <div class="panel">
+
+                    <div id="memberList"
+                         class="empty">
+
+                        No members found.
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- ID REQUESTS -->
+
+            <section id="idRequests" class="page">
+
+                <h1 class="page-title">
+                    ID Activation Requests
+                </h1>
+
+                <div class="panel">
+
+                    <div class="request">
+
+                        <h3>
+                            Example Request
+                        </h3>
+
+                        <p>
+                            No real request yet.
+                        </p>
+
+                        <p>
+                            Real requests will appear here
+                            after Backend connection.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- PACKAGE -->
+
+            <section id="packageRequests" class="page">
+
+                <h1 class="page-title">
+                    Package Activation Requests
+                </h1>
+
+                <div class="panel">
+
+                    <div class="empty">
+                        No package activation requests.
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- WITHDRAWAL -->
+
+            <section id="withdrawals" class="page">
+
+                <h1 class="page-title">
+                    Withdrawal Requests
+                </h1>
+
+                <div class="panel">
+
+                    <div class="empty">
+                        No withdrawal requests.
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- NETWORK -->
+
+            <section id="network" class="page">
+
+                <h1 class="page-title">
+                    Global Network
+                </h1>
+
+                <div class="panel">
+
+                    <div class="empty">
+                        No active members in network.
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- EARNINGS -->
+
+            <section id="earnings" class="page">
+
+                <h1 class="page-title">
+                    Earnings
+                </h1>
+
+                <div class="cards">
+
+                    <div class="card">
+                        <h3>APPROVED EARNINGS</h3>
+                        <strong>৳0</strong>
+                    </div>
+
+                    <div class="card">
+                        <h3>TOTAL BALANCE</h3>
+                        <strong>৳0</strong>
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- ANNOUNCEMENT -->
+
+            <section id="announcement" class="page">
+
+                <h1 class="page-title">
+                    Announcement
+                </h1>
+
+                <div class="panel">
+
+                    <textarea
+                        id="announcementText"
+                        rows="6"
+                        placeholder="Write announcement..."
+                    ></textarea>
+
+                    <button
+                        class="gold-btn"
+                        onclick="publishAnnouncement()"
+                    >
+                        PUBLISH ANNOUNCEMENT
+                    </button>
+
+                    <p id="announcementMessage"
+                       style="color:#5cff91;margin-top:15px;">
+                    </p>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+</section>
+
+
+<script>
+
+/* =========================================
+   DEMO ADMIN LOGIN
+   =========================================
+
+   IMPORTANT:
+   This is ONLY for interface testing.
+   Production authentication will be handled
+   by the secure Backend.
+*/
+
+const DEMO_USERNAME = "admin";
+const DEMO_PASSWORD = "12345678";
+
+
+function adminLogin(){
+
+    const username =
+        document.getElementById("adminUsername").value.trim();
+
+    const password =
+        document.getElementById("adminPassword").value;
+
+    const error =
+        document.getElementById("loginError");
+
+
+    if(
+        username === DEMO_USERNAME &&
+        password === DEMO_PASSWORD
+    ){
+
+        sessionStorage.setItem(
+            "innovaAdminLogin",
+            "true"
+        );
+
+        document.getElementById("loginPage").style.display =
+            "none";
+
+        document.getElementById("adminPage").style.display =
+            "block";
+
+        error.textContent = "";
+
+    }else{
+
+        error.textContent =
+            "Invalid admin username or password.";
+
+    }
+}
+
+
+/* PAGE NAVIGATION */
+
+function openPage(pageID,button){
+
+    document.querySelectorAll(".page")
+        .forEach(page=>{
+            page.classList.remove("active");
+        });
+
+    document.getElementById(pageID)
+        .classList.add("active");
+
+
+    document.querySelectorAll(".menu-btn")
+        .forEach(btn=>{
+            btn.classList.remove("active");
+        });
+
+    button.classList.add("active");
+}
+
+
+/* LOGOUT */
+
+function logoutAdmin(){
+
+    sessionStorage.removeItem(
+        "innovaAdminLogin"
+    );
+
+    location.reload();
+}
+
+
+/* ANNOUNCEMENT */
+
+function publishAnnouncement(){
+
+    const text =
+        document.getElementById(
+            "announcementText"
+        ).value.trim();
+
+    const message =
+        document.getElementById(
+            "announcementMessage"
+        );
+
+    if(!text){
+
+        message.style.color = "#ff5555";
+
+        message.textContent =
+            "Please write an announcement.";
+
+        return;
+    }
+
+    message.style.color = "#5cff91";
+
+    message.textContent =
+        "Announcement ready. Backend connection is required for real publishing.";
+
+}
+
+
+/* CHECK LOGIN */
+
+window.addEventListener("load",()=>{
+
+    const logged =
+        sessionStorage.getItem(
+            "innovaAdminLogin"
+        );
+
+    if(logged === "true"){
+
+        document.getElementById("loginPage")
+            .style.display = "none";
+
+        document.getElementById("adminPage")
+            .style.display = "block";
+
+    }
+
+});
+
+</script>
+
+</body>
+</html>
